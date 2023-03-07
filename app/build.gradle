@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'sg.edu.smu.cs461.scoutscoot'
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "sg.edu.smu.cs461.scoutscoot"
         minSdk 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
