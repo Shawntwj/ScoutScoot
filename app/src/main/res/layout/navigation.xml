@@ -11,6 +11,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+<!--        this is the start to locate scooters for rent -->
+<!--        maps and the description into two fragments -->
+<!--        this should go to the QR code -->
+<!--        pin should show details about the scooter -->
+<!--        only within distance then the button should be enabled -->
+<!--        default color is yellow -->
+
+<!--        destination -->
+<!--        a search bar then when you type will drop down top 5 nearest parking stations -->
+<!--        click on it will let you navigate -->
+<!--        can change the destination (only pay after parked) -->
+<!--        button to end ride open up a scanner to scan -->
+<!--        charge distance + abit of time -->
+<!--        stripe test API here -->
+
+<!--        proceed to pay -> java handle payment -->
+
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapView3"
             android:layout_width="412dp"
@@ -76,7 +93,7 @@
             android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/teal_200"
-            android:text="Pay"
+            android:text="Scan"
             android:layout_margin="10sp"/>
 
     </LinearLayout>
