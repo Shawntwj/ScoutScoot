@@ -11,13 +11,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView3"
-            android:layout_width="412dp"
-            android:layout_height="531dp"
-            android:contentDescription="@string/app_name"
-            tools:layout_editor_absoluteX="-3dp"
-            tools:layout_editor_absoluteY="-3dp" />
+<!--        <com.google.android.gms.maps.MapView-->
+<!--            android:id="@+id/mapView3"-->
+<!--            android:layout_width="412dp"-->
+<!--            android:layout_height="531dp"-->
+<!--            android:contentDescription="@string/app_name"-->
+<!--            tools:layout_editor_absoluteX="-3dp"-->
+<!--            tools:layout_editor_absoluteY="-3dp" />-->
 
         <SearchView
             android:layout_width="match_parent"
@@ -26,20 +26,20 @@
             android:background="#BFBFBF"
             android:queryHint="Search here" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/mapView3"
-            android:layout_alignParentRight="true"
-            android:layout_margin="10sp"
-            android:clickable="true"
-            android:contentDescription="calibrate"
-            android:focusable="true"
-            app:srcCompat="@android:drawable/ic_menu_mylocation"
-            android:backgroundTint="@color/cardview_light_background"
-            tools:layout_editor_absoluteX="29dp"
-            tools:layout_editor_absoluteY="40dp" />
+<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--            android:id="@+id/floatingActionButton3"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignBottom="@id/mapView3"-->
+<!--            android:layout_alignParentRight="true"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:clickable="true"-->
+<!--            android:contentDescription="calibrate"-->
+<!--            android:focusable="true"-->
+<!--            app:srcCompat="@android:drawable/ic_menu_mylocation"-->
+<!--            android:backgroundTint="@color/cardview_light_background"-->
+<!--            tools:layout_editor_absoluteX="29dp"-->
+<!--            tools:layout_editor_absoluteY="40dp" />-->
 
     </RelativeLayout>
 
@@ -76,7 +76,7 @@
             android:layout_width="200sp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/teal_200"
-            android:text="Pay"
+            android:text="Scan"
             android:layout_margin="10sp"/>
 
     </LinearLayout>
