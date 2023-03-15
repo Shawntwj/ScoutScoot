@@ -13,7 +13,8 @@ class SplashScreenActivity : AppCompatActivity() {
         val splashIcon = findViewById<ImageView>(R.id.splash)
         splashIcon.alpha = 0f
         splashIcon.animate().setDuration(1500).alpha(1f).withEndAction{
-            val i = Intent(this, MainActivity::class.java)
+            //check if user is logged in
+            val i = Intent(this, LoginActivity::class.java)
             startActivity(i)
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()
