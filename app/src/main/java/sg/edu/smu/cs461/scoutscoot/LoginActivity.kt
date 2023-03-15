@@ -3,6 +3,7 @@ package sg.edu.smu.cs461.scoutscoot
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -35,5 +36,11 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun switchPayment(view: View){
+        val intent = Intent(this, PaymentActivity::class.java)
+        intent.putExtra("priceKey","3000")
+        startActivity(intent)
     }
 }

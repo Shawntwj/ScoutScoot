@@ -15,7 +15,7 @@ import org.json.JSONException
 
 
 
-class Payment : AppCompatActivity() {
+class PaymentActivity : AppCompatActivity() {
 
     // stripe needs these variables to make the payment sheet
     private var paymentIntentClientSecret: String = ""
@@ -28,11 +28,17 @@ class Payment : AppCompatActivity() {
         setContentView(R.layout.activity_payment)
 
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
-        val price = findViewById<TextView>(R.id.priceValue).text.toString()
+        val it = intent
+        val priceContext = it.getStringExtra("priceKey").toString()
+
+        val price = findViewById<TextView>(R.id.priceValue)
+        price.text= priceContext
+
+
 
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
-        fetchAPI(price)
+        fetchAPI(priceContext)
 
         // set the stripe variables on top into a function that will be ran when payment button is clicked
         val paymentButton = findViewById<Button>(R.id.payment)
