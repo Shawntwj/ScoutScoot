@@ -95,7 +95,7 @@ class StartRideActivity : AppCompatActivity() {
             .child((auth.currentUser?.uid!!))
             .child("Rides")
             .child(uuid!!)
-            .setValue(Ride(scooter_id,scooter.name,System.currentTimeMillis(),0.0, false))
+            .setValue(Ride(scooter_id,scooter.name,scooter.where,"",System.currentTimeMillis(),0.0, false))
 
         database.child("Scooter")
             .child(scooter_id.toString())

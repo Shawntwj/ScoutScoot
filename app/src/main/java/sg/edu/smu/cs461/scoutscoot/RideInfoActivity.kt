@@ -183,7 +183,12 @@ class RideInfoActivity : AppCompatActivity() {
                         .child(rentalID)
                         .child("end_time")
                         .setValue(System.currentTimeMillis())
-
+                    database.child("Users")
+                        .child((auth.currentUser?.uid!!))
+                        .child("Rides")
+                        .child(rentalID)
+                        .child("final_latlong")
+                        .setValue(position)
                     database.child("Users")
                         .child(auth.currentUser?.uid!!)
                         .child("Rides")
