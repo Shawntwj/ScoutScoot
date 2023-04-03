@@ -118,7 +118,7 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
 
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
         googleMap.setOnInfoWindowClickListener(GoogleMap.OnInfoWindowClickListener {
-            val intent = Intent(context, ScanQR::class.java)
+            val intent = Intent(context, StartRideActivity::class.java)
             intent.putExtra("scooterindex", markerIds.get(it))
             startActivity(intent)
 

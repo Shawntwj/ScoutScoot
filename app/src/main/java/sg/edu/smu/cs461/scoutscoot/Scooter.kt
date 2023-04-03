@@ -44,7 +44,16 @@ open class Scooter(
     override fun getPosition(): LatLng {
         return let { LatLng(it.getLat(), it.getLon()) }
     }
+    fun getRange(): Int{
+        var range: Int
+        try {
+            range= (30/100).toInt()
+        }catch (e: NullPointerException){
+            range = 0
+        }
 
+        return range
+    }
     override fun getTitle(): String? {
         return name
     }

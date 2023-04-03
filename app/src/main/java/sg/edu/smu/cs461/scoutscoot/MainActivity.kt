@@ -6,11 +6,14 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var auth: FirebaseAuth
     private lateinit var binding : ActivityMainBinding
     companion object {
         private val TAG = MainActivity::class.qualifiedName
@@ -18,7 +21,17 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        val rideEnded = intent.getBundleExtra("rideEnded", false)
+        auth = Firebase.auth
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+//        if (zuth.currentUser == null){
+//            loadFragment(Home())
+//            requestUserPermissions()
+//            if(rideEnded){
+//                rideEndedDialog()
+//            }
+//        }
         setContentView(binding.root)
         //show home fragment first
         replaceFragment(Home())
