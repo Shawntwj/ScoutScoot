@@ -22,32 +22,32 @@ open class Ride(
 ) {
     // Null default values create a no-argument default constructor, which is needed
     // for deserialization from a DataSnapshot.
-
-    fun getLat(): Double {
-        val lat= this.initial_latlong?.substring(0,this.initial_latlong.indexOf(","))
-        return lat?.toDouble()!!
-    }
-
-    fun getLon(): Double {
-        val long = this.initial_latlong?.substring(this.initial_latlong.indexOf(",")+1, this.initial_latlong.length)
-        return long?.toDouble()!!
-    }
-    fun getFLat(): Double {
-        val lat= this.final_latlong?.substring(0,this.final_latlong.indexOf(","))
-        return lat?.toDouble()!!
-    }
-
-    fun getFLon(): Double {
-        val long = this.final_latlong?.substring(this.final_latlong.indexOf(",")+1, this.final_latlong.length)
-        return long?.toDouble()!!
-    }
-
-    fun getInitialPosition(): LatLng {
-        return let { LatLng(it.getLat(), it.getLon()) }
-    }
-    fun getFinalPosition(): LatLng {
-        return let { LatLng(it.getFLat(), it.getFLon()) }
-    }
+//
+//    fun getLat(): Double {
+//        val lat= this.initial_latlong?.substring(0,this.initial_latlong.indexOf(","))
+//        return lat?.toDouble()!!
+//    }
+//
+//    fun getLon(): Double {
+//        val long = this.initial_latlong?.substring(this.initial_latlong.indexOf(",")+1, this.initial_latlong.length)
+//        return long?.toDouble()!!
+//    }
+//    fun getFLat(): Double {
+//        val lat= this.final_latlong?.substring(0,this.final_latlong.indexOf(","))
+//        return lat?.toDouble()!!
+//    }
+//
+//    fun getFLon(): Double {
+//        val long = this.final_latlong?.substring(this.final_latlong.indexOf(",")+1, this.final_latlong.length)
+//        return long?.toDouble()!!
+//    }
+//
+//    fun getInitialPosition(): LatLng {
+//        return let { LatLng(it.getLat(), it.getLon()) }
+//    }
+//    fun getFinalPosition(): LatLng {
+//        return let { LatLng(it.getFLat(), it.getFLon()) }
+//    }
 
     fun getTime(): String {
         var timeString: String = ""

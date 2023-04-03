@@ -1,5 +1,6 @@
 package sg.edu.smu.cs461.scoutscoot
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -21,16 +22,17 @@ class PaymentActivity : AppCompatActivity() {
     private var paymentIntentClientSecret: String = ""
     private var configuration: PaymentSheet.CustomerConfiguration? = null
     private var paymentSheet: PaymentSheet? = null
-
+    private var isCancelled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
+
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
         val it = intent
         val priceContext = it.getStringExtra("priceKey").toString()
-
+        println(priceContext)
         val price = findViewById<TextView>(R.id.priceValue)
         price.text= priceContext
 
@@ -39,18 +41,20 @@ class PaymentActivity : AppCompatActivity() {
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
         fetchAPI(priceContext)
-
+        isCancelled = false
         // set the stripe variables on top into a function that will be ran when payment button is clicked
         val paymentButton = findViewById<Button>(R.id.payment)
 
         paymentButton.setOnClickListener {
             if (paymentIntentClientSecret != null){
                 paymentSheet?.presentWithPaymentIntent(paymentIntentClientSecret, PaymentSheet.Configuration("Codes Easy", configuration));
+                paymentButton.isEnabled = false
+                isCancelled = true
             }
         }
 
         // upon receiving payment result create a payment sheet
-        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+//        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
     }
 
     // implement function to change price will call fetchAPI again
@@ -61,10 +65,14 @@ class PaymentActivity : AppCompatActivity() {
         fetchAPI(price)
     }
 
+
+
     // handles payment result can be used to reroute after successful payment
     private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
-        if (paymentSheetResult is PaymentSheetResult.Canceled) {
+        if (paymentSheetResult is PaymentSheetResult.Canceled  && !isCancelled) {
+            isCancelled = true
             Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
+
         }
         if (paymentSheetResult is PaymentSheetResult.Failed) {
             Toast.makeText(this, (paymentSheetResult as PaymentSheetResult.Failed).error.message, Toast.LENGTH_SHORT).show()
@@ -72,7 +80,13 @@ class PaymentActivity : AppCompatActivity() {
         if (paymentSheetResult is PaymentSheetResult.Completed) {
             println("success")
             Toast.makeText(this, "Payment success", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("rideEnded", true)
+            startActivity(intent)
+            finish()
         }
+        val paymentButton = findViewById<Button>(R.id.payment)
+        paymentButton.isEnabled = true // re-enable button
     }
 
     private fun fetchAPI(price: String) {
@@ -116,6 +130,17 @@ class PaymentActivity : AppCompatActivity() {
             }
         }
         queue.add(request)
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        paymentSheet = null
     }
 
 
