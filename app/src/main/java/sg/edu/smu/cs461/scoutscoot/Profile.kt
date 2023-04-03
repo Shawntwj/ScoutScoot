@@ -45,6 +45,9 @@ class Profile : Fragment() {
                 binding.greeting.text ="Welcome, ${it.email}"
             }
         }
+        binding.test.setOnClickListener{
+            switchPayment()
+        }
         binding.RideLists.setOnClickListener{
             val intent = Intent (getActivity(), ListRideActivity::class.java)
             getActivity()?.startActivity(intent)
@@ -59,8 +62,12 @@ class Profile : Fragment() {
 
         }
 
+    }
 
-
+    fun switchPayment(){
+        val intent = Intent(requireActivity(), PaymentActivity::class.java)
+        intent.putExtra("priceKey","3000")
+        startActivity(intent)
     }
 
 
