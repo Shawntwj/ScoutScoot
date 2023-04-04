@@ -75,6 +75,11 @@ class RideInfoActivity : AppCompatActivity() {
 
         }
 
+        binding.floatingActionButton.setOnClickListener(){
+            val intent = Intent(this, MapRide::class.java)
+            startActivity(intent)
+        }
+
         database.child("Users").orderByKey().equalTo(auth.currentUser!!.uid)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
