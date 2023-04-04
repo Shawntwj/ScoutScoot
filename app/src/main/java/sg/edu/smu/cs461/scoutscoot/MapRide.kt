@@ -64,7 +64,7 @@ class MapRide : AppCompatActivity() {
             googleMap = it
             Log.d("GoogleMap", "before isMyLocationEnabled")
 //            googleMap.isMyLocationEnabled = true
-            val currentLL = LatLng(currentLat.toDouble(),currentLong.toDouble())
+            val currentLL = LatLng(1.3576298,103.9439574)
             googleMap.addMarker(MarkerOptions().position(currentLL).title("My Location"))
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLL,13f))
 

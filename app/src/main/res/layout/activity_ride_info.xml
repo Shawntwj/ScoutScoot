@@ -94,6 +94,14 @@
                 android:gravity="center"
                 app:drawableTopCompat="@drawable/ic_baseline_mode_of_travel_24" />
 
+
+            <TextView
+                android:id="@+id/accel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                app:drawableTopCompat="@drawable/ic_baseline_mode_of_travel_24" />
         </LinearLayout>
 
         <LinearLayout
@@ -117,6 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:layout_marginEnd="25dp"
+                android:onClick="unlock"
                 android:text="lock" />
 
             <Button
@@ -130,41 +139,42 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/accelX"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="X"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <TextView-->
+<!--            android:id="@+id/accelX"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="X"-->
+<!--            android:textSize="30sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <TextView
-            android:id="@+id/accelY"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Y"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/accelX" />
+<!--        <TextView-->
+<!--            android:id="@+id/accelY"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Y"-->
+<!--            android:textSize="30sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/accelX" />-->
 
-        <TextView
-            android:id="@+id/accelZ"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Z"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/accelY" />
+<!--        <TextView-->
+<!--            android:id="@+id/accelZ"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Z"-->
+<!--            android:textSize="30sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/accelY" />-->
 
-        <TextView
-            android:id="@+id/accel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="total"
-            android:textSize="30sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/accelZ" />
+<!--        <TextView-->
+<!--            android:id="@+id/accel"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="total"-->
+<!--            android:textSize="30sp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="parent" />-->
+
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="wrap_content"
@@ -192,5 +202,7 @@
                 tools:layout_editor_absoluteX="177dp"
                 tools:layout_editor_absoluteY="633dp" />
         </LinearLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

@@ -28,7 +28,7 @@
             android:background="@drawable/destination_box"
             android:gravity="center"
             android:padding="15sp"
-            android:text="place one"
+            android:text="520366"
             android:textSize="15dp" />
 
         <ImageView
@@ -44,7 +44,8 @@
             android:background="@drawable/destination_box"
             android:gravity="center"
             android:padding="15sp"
-            android:text="place two" />
+            android:text="188065" />
+
     </LinearLayout>
 
     <!-- distance and time -->

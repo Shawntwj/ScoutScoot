@@ -88,7 +88,7 @@ class Profile : Fragment() {
 
     fun gostartride(){
         val intent = Intent(requireActivity(),StartRideActivity::class.java)
-        intent.putExtra("scooterindex", "2")
+        intent.putExtra("scooterindex", "1002")
         startActivity(intent)
 
 

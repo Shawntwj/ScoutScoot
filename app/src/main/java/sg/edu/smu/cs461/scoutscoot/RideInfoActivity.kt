@@ -18,6 +18,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
+import android.widget.Button
 import android.widget.Chronometer.OnChronometerTickListener
 import android.widget.TextView
 import android.widget.Toast
@@ -55,6 +56,9 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     private lateinit var sensorMan: SensorManager
     private lateinit var accelerometer: Sensor
     private var color = false
+
+    private var totalTime = 0
+
 
     companion object {
         private const val ALL_PERMISSIONS_RESULT = 1011
@@ -141,9 +145,11 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                     binding.timer.onChronometerTickListener = OnChronometerTickListener {
                         val elapsedMillis = SystemClock.elapsedRealtime() - binding.timer.base
                         val minutes = (elapsedMillis / 1000 / 60)
-                        price = (minutes * 5).toDouble()
-                        binding.price.text = price.toString().plus(" DKK")
+                        price = (minutes * 0.5).toDouble()
+                        binding.price.text = price.toString().plus(" SGD")
+//                        totalTime = minutes.toInt()
                     }
+
                     binding.timer.start()
                     binding.lock.setOnClickListener {
                         database.child("Users")
@@ -234,7 +240,10 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 //                    startActivity(intent)
 
                     val intent = Intent(this, PaymentActivity::class.java)
-                    intent.putExtra("priceKey","3000")
+
+                    price *= 100
+                    intent.putExtra("priceKey",price.toInt().toString())
+                    intent.putExtra("timeKey",totalTime.toString())
                     startActivity(intent)
 
 
@@ -359,16 +368,21 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
         val accel = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
 
-        findViewById<TextView>(R.id.accelX).text = "Acceleration X: $x"
-        findViewById<TextView>(R.id.accelY).text = "Acceleration Y: $y"
-        findViewById<TextView>(R.id.accelZ).text = "Acceleration Z: $z"
+//        findViewById<TextView>(R.id.accelX).text = "Acceleration X: $x"
+//        findViewById<TextView>(R.id.accelY).text = "Acceleration Y: $y"
+//        findViewById<TextView>(R.id.accelZ).text = "Acceleration Z: $z"
         findViewById<TextView>(R.id.accel).text = "Acceleration: $accel"
 
         if (accel > 20) {
             Toast.makeText(this, "TOO FAST", Toast.LENGTH_SHORT)
                 .show()
             // you can insert you speed control here
+            findViewById<Button>(R.id.lock).text = "Unlock"
         }
+    }
+
+    fun unlock(view: View){
+        findViewById<Button>(R.id.lock).text = "lock"
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {

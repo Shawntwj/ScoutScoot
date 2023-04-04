@@ -37,6 +37,13 @@ class PaymentActivity : AppCompatActivity() {
         val priceDisplay = (priceContext.toInt() / 100 ).toString()
         price.text= priceDisplay
 
+
+        val timeContext = it.getStringExtra("timeKey").toString()
+        println(timeContext)
+        val time = findViewById<TextView>(R.id.timeValue)
+        time.text= timeContext
+
+
         val paymentButton = findViewById<Button>(R.id.payment)
 
         paymentButton.isEnabled = false
