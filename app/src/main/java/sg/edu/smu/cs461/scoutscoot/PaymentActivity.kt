@@ -1,7 +1,9 @@
 package sg.edu.smu.cs461.scoutscoot
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -18,28 +20,26 @@ import org.json.JSONException
 class PaymentActivity : AppCompatActivity() {
 
     // stripe needs these variables to make the payment sheet
-    private var paymentIntentClientSecret: String = ""
-    private var configuration: PaymentSheet.CustomerConfiguration? = null
-    private var paymentSheet: PaymentSheet? = null
-
+    lateinit var paymentIntentClientSecret: String
+    lateinit var configuration: PaymentSheet.CustomerConfiguration
+    lateinit var paymentSheet: PaymentSheet
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
+
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
-        val it = intent
-        val priceContext = it.getStringExtra("priceKey").toString()
-
-        val price = findViewById<TextView>(R.id.priceValue)
-        price.text= priceContext
-
-
+//        val it = intent
+//        val priceContext = it.getStringExtra("priceKey").toString()
+//        println(priceContext)
+//        val price = findViewById<TextView>(R.id.priceValue)
+//        price.text= priceContext
+//        fetchAPI(priceContext)
 
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
-        fetchAPI(priceContext)
-
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         // set the stripe variables on top into a function that will be ran when payment button is clicked
         val paymentButton = findViewById<Button>(R.id.payment)
 
@@ -72,8 +72,12 @@ class PaymentActivity : AppCompatActivity() {
         if (paymentSheetResult is PaymentSheetResult.Completed) {
             println("success")
             Toast.makeText(this, "Payment success", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("paymentSuccessful", true)
+            startActivity(intent)
         }
     }
+
 
     private fun fetchAPI(price: String) {
 //        val url = "https://demo.codeseasy.com/apis/stripe/"
@@ -117,6 +121,27 @@ class PaymentActivity : AppCompatActivity() {
         }
         queue.add(request)
     }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the variables to the outState bundle
+        outState.putString("paymentIntentClientSecretKey", paymentIntentClientSecret)
+        outState.putParcelable("configurationKey", configuration)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        // Restore the variables from the savedInstanceState bundle
+        paymentIntentClientSecret = savedInstanceState.getString("paymentIntentClientSecretKey").toString()
+        configuration = savedInstanceState.getParcelable("configurationKey")!!
+    }
+
+
+
+
 
 
 }

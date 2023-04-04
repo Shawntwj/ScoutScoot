@@ -211,9 +211,15 @@ class RideInfoActivity : AppCompatActivity() {
                         .child("where")
                         .setValue(position)
 
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("rideEnded", true)
+//                    val intent = Intent(this, MainActivity::class.java)
+//                    intent.putExtra("rideEnded", true)
+//                    startActivity(intent)
+
+                    val intent = Intent(this, PaymentActivity::class.java)
+                    intent.putExtra("priceKey","3000")
                     startActivity(intent)
+
+
                 } else {
                     binding.endrental.isEnabled=true
                     snackbarWaiting.dismiss()
@@ -315,6 +321,7 @@ class RideInfoActivity : AppCompatActivity() {
             .show()
 
     }
+
 
 
 

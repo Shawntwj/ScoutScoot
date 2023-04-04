@@ -40,41 +40,46 @@ class MainActivity : AppCompatActivity() {
 //        }
         setContentView(binding.root)
         //show home fragment first
+        val paymentSuccessful = intent.getBooleanExtra("paymentSuccessful", false)
 
-        val user = auth.currentUser
-        Firebase.database(DATABASE_URL).reference.child("Users").orderByKey().equalTo(user!!.uid).addListenerForSingleValueEvent(object:
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for(datasnapshot in snapshot.children){
-                    val users= datasnapshot.getValue<User>()
-                    //if user have an active ride redirect to rideInfoActivity
-                    if(!(users?.inRental.equals("false"))){
-                        replaceFragment(Home())
-                        binding.bottomNavigationView.setOnItemSelectedListener {
-                            when(it.itemId){
-                                R.id.home -> replaceFragment(Home())
-                                R.id.qr -> {
-                                    replaceFragment(ScanQR())
-                                }
-                                R.id.profile -> replaceFragment(Profile())
+        if (paymentSuccessful) {
+            println("it works")
 
-                                else ->{
+            // Navigate to the Home fragment
+//            loadFragment(Profile())
 
-                                }
-                            }
-                            true
-                        }
-                    }
+            supportFragmentManager.popBackStackImmediate()
+
+            val bundle = Bundle()
+            bundle.putString("myKey", "paymentSuccessful")
+            val fragment = Profile()
+            fragment.arguments = bundle
+
+            // Replace with the Profile fragment
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_view, fragment)
+                .commit()
+        } else {
+
+            replaceFragment(Home())
+
+
+        }
+
+
+        binding.bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.home -> replaceFragment(Home())
+                R.id.qr -> replaceFragment(ScanQR())
+                R.id.profile -> replaceFragment(Profile())
+
+                else ->{
+
                 }
+
             }
-
-            override fun onCancelled(error: DatabaseError) {
-            }
-
-        })
-
-
-
+            true
+        }
     }
 
     private fun replaceFragment(fragment: Fragment) {
