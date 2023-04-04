@@ -108,7 +108,7 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.w(TAG, "Failed to read value.", error.toException())
+
             }
 
         })
