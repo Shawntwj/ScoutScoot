@@ -130,6 +130,41 @@
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/accelX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/accelY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Y"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accelX" />
+
+        <TextView
+            android:id="@+id/accelZ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Z"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accelY" />
+
+        <TextView
+            android:id="@+id/accel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="total"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/accelZ" />
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="wrap_content"

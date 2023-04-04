@@ -22,4 +22,5 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_ride_info">RideInfoActivity</string>
     <string name="toast_camera_deny" />
+    <string name="readqrcode">Scan</string>
 </resources>

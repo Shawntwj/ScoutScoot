@@ -9,11 +9,18 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
 import android.widget.Chronometer.OnChronometerTickListener
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -32,7 +39,7 @@ import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityRideInfoBinding
 
 
-class RideInfoActivity : AppCompatActivity() {
+class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
     private lateinit var binding: ActivityRideInfoBinding
     private val database = Firebase.database(DATABASE_URL).reference
@@ -45,6 +52,10 @@ class RideInfoActivity : AppCompatActivity() {
     private lateinit var preferences: SharedPreferences
     private var price = 0.0
 
+    private lateinit var sensorMan: SensorManager
+    private lateinit var accelerometer: Sensor
+    private var color = false
+
     companion object {
         private const val ALL_PERMISSIONS_RESULT = 1011
     }
@@ -56,12 +67,14 @@ class RideInfoActivity : AppCompatActivity() {
         val view = binding.root
         preferences = getPreferences(Context.MODE_PRIVATE)
 
-
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-
-
+        // accelormeter sensor code
+        sensorMan = getSystemService(SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         binding.endrental.setOnClickListener {
+
             //check if user have location permission in order to finish and update the scooter location
             endrental()
         //            val broadcast =Intent(this, Vibration::class.java)
@@ -327,7 +340,39 @@ class RideInfoActivity : AppCompatActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_NORMAL)
+    }
 
+    override fun onPause() {
+        super.onPause()
+        sensorMan.unregisterListener(this)
+
+    }
+
+    // on sensor changed
+    override fun onSensorChanged(event: SensorEvent?) {
+        val x = event!!.values[0]
+        val y = event!!.values[1]
+        val z = event!!.values[2]
+
+        val accel = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+
+        findViewById<TextView>(R.id.accelX).text = "Acceleration X: $x"
+        findViewById<TextView>(R.id.accelY).text = "Acceleration Y: $y"
+        findViewById<TextView>(R.id.accelZ).text = "Acceleration Z: $z"
+        findViewById<TextView>(R.id.accel).text = "Acceleration: $accel"
+
+        if (accel > 20) {
+            Toast.makeText(this, "TOO FAST", Toast.LENGTH_SHORT)
+                .show()
+            // you can insert you speed control here
+        }
+    }
+
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+    }
 
 
 }
