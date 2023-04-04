@@ -33,9 +33,38 @@ class MainActivity : AppCompatActivity() {
 //                rideEndedDialog()
 //            }
 //        }
+
+
+
         setContentView(binding.root)
         //show home fragment first
-        replaceFragment(Home())
+        val paymentSuccessful = intent.getBooleanExtra("paymentSuccessful", false)
+
+        if (paymentSuccessful) {
+            println("it works")
+
+            // Navigate to the Home fragment
+//            loadFragment(Profile())
+
+            supportFragmentManager.popBackStackImmediate()
+
+            val bundle = Bundle()
+            bundle.putString("myKey", "paymentSuccessful")
+            val fragment = Profile()
+            fragment.arguments = bundle
+
+            // Replace with the Profile fragment
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_view, fragment)
+                .commit()
+        } else {
+
+            replaceFragment(Home())
+
+
+        }
+
+
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.home -> replaceFragment(Home())
@@ -52,6 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
+
             supportFragmentManager.beginTransaction().apply{
                 replace(R.id.frame_layout, fragment)
                 commit()
@@ -103,5 +133,10 @@ class MainActivity : AppCompatActivity() {
 
         transaction.addToBackStack(null)
         transaction.commit()
+
+
     }
+
+
+
 }

@@ -36,6 +36,11 @@ class Profile : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        println("i am at profile")
+        val bundle = arguments
+        val myValue = bundle?.getString("myKey")
+        println(myValue)
+
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
         database = Firebase.database(DATABASE_URL).reference

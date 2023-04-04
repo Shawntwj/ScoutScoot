@@ -3,6 +3,7 @@ package sg.edu.smu.cs461.scoutscoot
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -26,32 +27,31 @@ class PaymentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
-        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+
 
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
-        val it = intent
-        val priceContext = it.getStringExtra("priceKey").toString()
-        println(priceContext)
-        val price = findViewById<TextView>(R.id.priceValue)
-        price.text= priceContext
+//        val it = intent
+//        val priceContext = it.getStringExtra("priceKey").toString()
+//        println(priceContext)
+//        val price = findViewById<TextView>(R.id.priceValue)
+//        price.text= priceContext
+//        fetchAPI(priceContext)
 
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
-        fetchAPI(priceContext)
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+        // set the stripe variables on top into a function that will be ran when payment button is clicked
+        val paymentButton = findViewById<Button>(R.id.payment)
+
+        paymentButton.setOnClickListener {
+            if (paymentIntentClientSecret != null){
+                paymentSheet?.presentWithPaymentIntent(paymentIntentClientSecret, PaymentSheet.Configuration("Codes Easy", configuration));
+            }
+        }
+
+        // upon receiving payment result create a payment sheet
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
     }
-
-    fun presentPaymentSheet(view: View) {
-        view.isEnabled = false
-        paymentSheet?.presentWithPaymentIntent(
-            paymentIntentClientSecret,
-            PaymentSheet.Configuration(
-                merchantDisplayName = "Codes Easy",
-                customer = configuration
-            )
-        )
-    }
-
-
 
     // implement function to change price will call fetchAPI again
     fun changePrice(view: View){
@@ -61,29 +61,22 @@ class PaymentActivity : AppCompatActivity() {
         fetchAPI(price)
     }
 
-
+    // handles payment result can be used to reroute after successful payment
     private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
-        when(paymentSheetResult) {
-            is PaymentSheetResult.Canceled -> {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
-                println("Canceled")
-
-            }
-            is PaymentSheetResult.Failed -> {
-                println("Error: ${paymentSheetResult.error}")
-            }
-            is PaymentSheetResult.Completed -> {
-                // Display for example, an order confirmation screen
-                println("Completed")
-                // 4242 4242 4242 4242
-                val intent = Intent(this, LoginActivity::class.java)
-                intent.putExtra("rideEnded", true)
-                startActivity(intent)
-            }
+        if (paymentSheetResult is PaymentSheetResult.Canceled) {
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show()
         }
-
+        if (paymentSheetResult is PaymentSheetResult.Failed) {
+            Toast.makeText(this, (paymentSheetResult as PaymentSheetResult.Failed).error.message, Toast.LENGTH_SHORT).show()
+        }
+        if (paymentSheetResult is PaymentSheetResult.Completed) {
+            println("success")
+            Toast.makeText(this, "Payment success", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("paymentSuccessful", true)
+            startActivity(intent)
+        }
     }
-
 
 
     private fun fetchAPI(price: String) {
@@ -128,6 +121,25 @@ class PaymentActivity : AppCompatActivity() {
         }
         queue.add(request)
     }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the variables to the outState bundle
+        outState.putString("paymentIntentClientSecretKey", paymentIntentClientSecret)
+        outState.putParcelable("configurationKey", configuration)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        // Restore the variables from the savedInstanceState bundle
+        paymentIntentClientSecret = savedInstanceState.getString("paymentIntentClientSecretKey").toString()
+        configuration = savedInstanceState.getParcelable("configurationKey")!!
+    }
+
+
 
 
 
