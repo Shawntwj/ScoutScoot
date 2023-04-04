@@ -69,7 +69,7 @@ class MapRide : AppCompatActivity() {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLL,13f))
 
             //make user input their destination and reverse geocode to get the lat long
-            val final = LatLng(13.029727,77.5933021)
+            val final = LatLng(1.2963,103.8502)
             googleMap.addMarker(MarkerOptions().position(final).title("Destination"))
 
             Log.d("GoogleMap", "before URL")
