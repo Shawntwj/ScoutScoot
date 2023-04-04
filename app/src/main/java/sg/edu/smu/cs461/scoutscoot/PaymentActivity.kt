@@ -34,7 +34,8 @@ class PaymentActivity : AppCompatActivity() {
         val priceContext = it.getStringExtra("priceKey").toString()
         println(priceContext)
         val price = findViewById<TextView>(R.id.priceValue)
-        price.text= priceContext
+        val priceDisplay = (priceContext.toInt() / 100 ).toString()
+        price.text= priceDisplay
 
         val paymentButton = findViewById<Button>(R.id.payment)
 

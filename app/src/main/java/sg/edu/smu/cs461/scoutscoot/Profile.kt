@@ -36,10 +36,7 @@ class Profile : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        println("i am at profile")
-        val bundle = arguments
-        val myValue = bundle?.getString("myKey")
-        println(myValue)
+
 
         super.onViewCreated(view, savedInstanceState)
         auth = FirebaseAuth.getInstance()
@@ -53,6 +50,15 @@ class Profile : Fragment() {
         binding.test.setOnClickListener{
             switchPayment()
         }
+
+        binding.newtest.setOnClickListener{
+            goendride()
+        }
+
+        binding.newnewtest.setOnClickListener({
+            gostartride()
+        })
+
         binding.RideLists.setOnClickListener{
             val intent = Intent (getActivity(), ListRideActivity::class.java)
             getActivity()?.startActivity(intent)
@@ -73,6 +79,19 @@ class Profile : Fragment() {
         val intent = Intent(requireActivity(), PaymentActivity::class.java)
         intent.putExtra("priceKey","3000")
         startActivity(intent)
+    }
+
+    fun goendride(){
+        val intent = Intent(requireActivity(),RideInfoActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun gostartride(){
+        val intent = Intent(requireActivity(),StartRideActivity::class.java)
+        intent.putExtra("scooterindex", "2")
+        startActivity(intent)
+
+
     }
 
 

@@ -130,7 +130,6 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
                 else{
                     googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(1.2963,103.8502), 12f))
                 }
-
             }
             googleMap.isMyLocationEnabled = true
             googleMap.uiSettings.isMyLocationButtonEnabled = true
