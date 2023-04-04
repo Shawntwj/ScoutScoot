@@ -17,7 +17,7 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
+    <string name="google_places_api_key">AIzaSyDnirFPjhDks5Gv-m9V_KjjJqFsLmLOY4w</string>
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_ride_info">RideInfoActivity</string>

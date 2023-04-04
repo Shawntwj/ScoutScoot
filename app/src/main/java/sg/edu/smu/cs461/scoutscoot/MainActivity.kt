@@ -2,12 +2,18 @@ package sg.edu.smu.cs461.scoutscoot
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityMainBinding
 
@@ -34,20 +40,41 @@ class MainActivity : AppCompatActivity() {
 //        }
         setContentView(binding.root)
         //show home fragment first
-        replaceFragment(Home())
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            when(it.itemId){
-                R.id.home -> replaceFragment(Home())
-                R.id.qr -> replaceFragment(ScanQR())
-                R.id.profile -> replaceFragment(Profile())
 
-                else ->{
+        val user = auth.currentUser
+        Firebase.database(DATABASE_URL).reference.child("Users").orderByKey().equalTo(user!!.uid).addListenerForSingleValueEvent(object:
+            ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(datasnapshot in snapshot.children){
+                    val users= datasnapshot.getValue<User>()
+                    //if user have an active ride redirect to rideInfoActivity
+                    if(!(users?.inRental.equals("false"))){
+                        replaceFragment(Home())
+                        binding.bottomNavigationView.setOnItemSelectedListener {
+                            when(it.itemId){
+                                R.id.home -> replaceFragment(Home())
+                                R.id.qr -> {
+                                    replaceFragment(ScanQR())
+                                }
+                                R.id.profile -> replaceFragment(Profile())
 
+                                else ->{
+
+                                }
+                            }
+                            true
+                        }
+                    }
                 }
-
             }
-            true
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+
+        })
+
+
+
     }
 
     private fun replaceFragment(fragment: Fragment) {

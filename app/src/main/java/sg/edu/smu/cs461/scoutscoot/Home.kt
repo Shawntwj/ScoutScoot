@@ -114,8 +114,6 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
         })
 
 
-
-
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
         googleMap.setOnInfoWindowClickListener(GoogleMap.OnInfoWindowClickListener {
             val intent = Intent(context, StartRideActivity::class.java)
