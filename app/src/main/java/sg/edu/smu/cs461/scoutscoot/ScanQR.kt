@@ -22,11 +22,7 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.FragmentScanQRBinding
 import java.io.IOException
@@ -37,13 +33,11 @@ class ScanQR : Fragment() {
     private lateinit var cameraSource: CameraSource
     private lateinit var barcodeDetector: BarcodeDetector
     private var scannedValue = ""
-    private var scooter_id: Int? = null
-    private lateinit var scooter: Scooter
     private var auth = FirebaseAuth.getInstance()
     private val database = Firebase.database(DATABASE_URL).reference
     private lateinit var _binding: FragmentScanQRBinding
     private val binding get() = _binding!!
-    private var index=""
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.i(TAG, "onAttach() called")
@@ -63,7 +57,7 @@ class ScanQR : Fragment() {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState)
         _binding = FragmentScanQRBinding.inflate(inflater, container, false)
-        index = arguments?.getString("scooterindex").toString()
+
         if (ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.CAMERA
             ) != PackageManager.PERMISSION_GRANTED
@@ -79,9 +73,10 @@ class ScanQR : Fragment() {
 
 
     private fun setupControls() {
-//        var args = this.arguments
-//        var rideId = args?.get("scanner_ride_id")
-//        Log.i("rideid FROM scanner fragment", rideId.toString())
+        var args = this.arguments
+        var scooterId = args?.getString("scooter-index")
+
+        Log.i("rideid FROM scanner fragment", scooterId.toString())
 
         barcodeDetector =
             BarcodeDetector.Builder(requireContext()).setBarcodeFormats(Barcode.ALL_FORMATS).build()
@@ -128,93 +123,36 @@ class ScanQR : Fragment() {
 
             override fun receiveDetections(detections: Detector.Detections<Barcode>) {
                 val barcodes = detections.detectedItems
+                Log.d(TAG, "barcode + ${barcodes.size().toString()}")
                 if (barcodes.size() == 1) {
                     scannedValue = barcodes.valueAt(0).rawValue
-                    Log.i(TAG, "Scanned QR code, value: $scannedValue")
-//                    val bundle = arguments
-//                    val message = bundle!!.getString("mText")
-                    if(scannedValue == index) {
-                        database.child("Scooter").orderByKey().equalTo(index)
-                            .addValueEventListener(object :
-                                ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    if (dataSnapshot.exists()) {
-                                        for (postSnapshot in dataSnapshot.children) {
-                                            if (postSnapshot.getValue<Scooter>()?.rented == false) {
-                                                scooter_id = postSnapshot.key!!.toInt()
-                                                scooter = postSnapshot.getValue<Scooter>()!!
-                                                Toast.makeText(
-                                                    activity,
-                                                    "Scanned Successfully! Starting Ride",
-                                                    Toast.LENGTH_SHORT
-                                                )
-                                                //Don't forget to add this line printing value or finishing activity must run on main thread
-                                                activity?.runOnUiThread {
-                                                    cameraSource.stop()
+                    Log.d(TAG, "scanned + ${scannedValue}")
+                    Log.d(TAG, "scooter + ${scooterId.toString()}")
+                    if(scannedValue == scooterId.toString()) {
+                        Log.d(TAG, "There")
+                        //Don't forget to add this line printing value or finishing activity must run on main thread
+                        activity?.runOnUiThread {
+                            cameraSource.stop()
 
-                                                    requireActivity().supportFragmentManager
-                                                        .beginTransaction()
-                                                        .remove(this@ScanQR)
-                                                        .commit()
-                                                    requireActivity().supportFragmentManager.popBackStack()
-                                                    startride()
-                                                }
-                                            } else {
-//                                        setResult(Activity.RESULT_OK)
-//                                        finish() //return to back activity
-                                            }
+                            requireActivity().supportFragmentManager
+                                .beginTransaction()
+                                .remove(this@ScanQR)
+                                .commit()
+                            requireActivity().supportFragmentManager.popBackStack()
 
-                                        }
-                                    } else {
-                                        Toast.makeText(
-                                            activity,
-                                            "QR Code does not match, try again",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                    }
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                }
-                            })
+                            val intent = Intent(context, StartRideActivity::class.java)
+                            intent.putExtra("scooterindex", scooterId)
+                            startActivity(intent)
+                        }
                     }
-
-
-
                 } else {
-                    Toast.makeText(requireContext(), "value- else", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "Here")
+//                    Toast.makeText(requireContext(), "Qr Code Wrong", Toast.LENGTH_SHORT).show()
                 }
             }
         })
     }
-    private fun startride(){
 
-        //Rental ID generated by firebase realtime database
-        val uuid =  database.child("Users")
-            .child(auth.currentUser?.uid!!)
-            .push()
-            .key
-        database.child("Users")
-            .child((auth.currentUser?.uid!!))
-            .child("Rides")
-            .child(uuid!!)
-            .setValue(Ride(scooter_id,scooter.name,scooter.where,"",System.currentTimeMillis(),0.0, false))
-
-        database.child("Scooter")
-            .child(scooter_id.toString())
-            .child("rented")
-            .setValue(true)
-
-        database.child("Users")
-            .child((auth.currentUser?.uid!!))
-            .child("inRental")
-            .setValue(uuid)
-
-        val intent = Intent (activity, RideInfoActivity::class.java)
-        activity?.startActivity(intent)
-
-
-    }
     private fun askForCameraPermission() {
         ActivityCompat.requestPermissions(
             requireContext() as Activity,

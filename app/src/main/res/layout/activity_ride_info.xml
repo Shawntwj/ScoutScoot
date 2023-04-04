@@ -148,7 +148,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 android:backgroundTint="@color/primaryColor"
-                android:contentDescription="@string/readqrcode"
+                android:contentDescription="@string/toast_camera_deny"
                 android:text="Scan"
                 app:borderWidth="0dp"
                 app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"

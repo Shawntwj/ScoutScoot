@@ -2,26 +2,25 @@ package sg.edu.smu.cs461.scoutscoot
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
+import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.util.Log
-import androidx.core.app.ActivityCompat
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.OnMapsSdkInitializedCallback
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.MapsInitializer.Renderer
-import sg.edu.smu.cs461.scoutscoot.R
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,6 +29,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.FragmentHomeBinding
+
 
 class Home : Fragment(), OnMapsSdkInitializedCallback {
     private lateinit var markerIcon: BitmapDescriptor
@@ -108,17 +108,34 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                Log.w(TAG, "Failed to read value.", error.toException())
             }
 
         })
 
 
+
+
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
         googleMap.setOnInfoWindowClickListener(GoogleMap.OnInfoWindowClickListener {
-            val intent = Intent(context, StartRideActivity::class.java)
-            intent.putExtra("scooterindex", markerIds.get(it))
-            startActivity(intent)
+//            val intent = Intent(context, StartRideActivity::class.java)
+//            intent.putExtra("scooterindex", markerIds.get(it))
+//            startActivity(intent)
+
+            val bundle = Bundle()
+            bundle.putString("scooter-index", markerIds.get(it).toString())
+            val fragment: Fragment = ScanQR()
+            fragment.arguments = bundle
+            val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()
+            transaction.replace(
+                R.id.map,
+                fragment
+            ) // give your fragment container id in first parameter
+
+            transaction.addToBackStack(null) // if written, this transaction will be added to backstack
+
+            transaction.commit()
+
 
         })
 
