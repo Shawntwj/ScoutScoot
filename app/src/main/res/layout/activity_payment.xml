@@ -74,13 +74,13 @@
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time: "
+                    android:text="Distance: "
                     android:textSize="15sp"/>
                 <TextView
                     android:id="@+id/distanceValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1.1 "
+                    android:text="0 "
                     android:textSize="15sp"/>
                 <TextView
                     android:id="@+id/distanceMetric"
@@ -171,12 +171,12 @@
 
 
     <!--testing -->
-    <Button
-        android:id="@+id/changeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="change price"
-        android:onClick="changePrice"/>
+<!--    <Button-->
+<!--        android:id="@+id/changeButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="change price"-->
+<!--        android:onClick="changePrice"/>-->
 
     <!-- payment button -->
     <androidx.appcompat.widget.AppCompatButton

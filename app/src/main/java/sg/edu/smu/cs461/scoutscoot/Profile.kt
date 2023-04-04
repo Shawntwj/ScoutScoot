@@ -47,17 +47,17 @@ class Profile : Fragment() {
                 binding.greeting.text ="Welcome, ${it.email}"
             }
         }
-        binding.test.setOnClickListener{
-            switchPayment()
-        }
-
-        binding.newtest.setOnClickListener{
-            goendride()
-        }
-
-        binding.newnewtest.setOnClickListener({
-            gostartride()
-        })
+//        binding.test.setOnClickListener{
+//            switchPayment()
+//        }
+//
+//        binding.newtest.setOnClickListener{
+//            goendride()
+//        }
+//
+//        binding.newnewtest.setOnClickListener({
+//            gostartride()
+//        })
 
         binding.RideLists.setOnClickListener{
             val intent = Intent (getActivity(), ListRideActivity::class.java)
@@ -74,25 +74,23 @@ class Profile : Fragment() {
         }
 
     }
-
-    fun switchPayment(){
-        val intent = Intent(requireActivity(), PaymentActivity::class.java)
-        intent.putExtra("priceKey","3000")
-        startActivity(intent)
-    }
-
-    fun goendride(){
-        val intent = Intent(requireActivity(),RideInfoActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun gostartride(){
-        val intent = Intent(requireActivity(),StartRideActivity::class.java)
-        intent.putExtra("scooterindex", "1002")
-        startActivity(intent)
-
-
-    }
+//
+//    fun switchPayment(){
+//        val intent = Intent(requireActivity(), PaymentActivity::class.java)
+//        intent.putExtra("priceKey","3000")
+//        startActivity(intent)
+//    }
+//
+//    fun goendride(){
+//        val intent = Intent(requireActivity(),RideInfoActivity::class.java)
+//        startActivity(intent)
+//    }
+//
+//    fun gostartride(){
+//        val intent = Intent(requireActivity(),StartRideActivity::class.java)
+//        intent.putExtra("scooterindex", "1002")
+//        startActivity(intent)
+//    }
 
 
 }

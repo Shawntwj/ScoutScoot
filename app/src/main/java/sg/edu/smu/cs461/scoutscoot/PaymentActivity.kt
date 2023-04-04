@@ -67,12 +67,12 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     // implement function to change price will call fetchAPI again
-    fun changePrice(view: View){
-        val priceTV = findViewById<TextView>(R.id.priceValue)
-        priceTV.text = "2000"
-        val price = priceTV.text.toString()
-        fetchAPI(price)
-    }
+//    fun changePrice(view: View){
+//        val priceTV = findViewById<TextView>(R.id.priceValue)
+//        priceTV.text = "2000"
+//        val price = priceTV.text.toString()
+//        fetchAPI(price)
+//    }
 
     // handles payment result can be used to reroute after successful payment
     private fun onPaymentSheetResult(paymentSheetResult: PaymentSheetResult) {
