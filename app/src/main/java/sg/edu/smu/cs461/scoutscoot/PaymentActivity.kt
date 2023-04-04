@@ -30,18 +30,23 @@ class PaymentActivity : AppCompatActivity() {
 
 
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
-//        val it = intent
-//        val priceContext = it.getStringExtra("priceKey").toString()
-//        println(priceContext)
-//        val price = findViewById<TextView>(R.id.priceValue)
-//        price.text= priceContext
-//        fetchAPI(priceContext)
+        val it = intent
+        val priceContext = it.getStringExtra("priceKey").toString()
+        println(priceContext)
+        val price = findViewById<TextView>(R.id.priceValue)
+        price.text= priceContext
+
+        val paymentButton = findViewById<Button>(R.id.payment)
+
+        paymentButton.isEnabled = false
+        fetchAPI(priceContext)
+        paymentButton.isEnabled = true
 
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
         paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
         // set the stripe variables on top into a function that will be ran when payment button is clicked
-        val paymentButton = findViewById<Button>(R.id.payment)
+
 
         paymentButton.setOnClickListener {
             if (paymentIntentClientSecret != null){
