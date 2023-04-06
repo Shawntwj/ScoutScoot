@@ -147,7 +147,7 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                         val minutes = (elapsedMillis / 1000 / 30)
                         price = (minutes * 0.5).toDouble()
                         binding.price.text = price.toString().plus(" SGD")
-//                        totalTime = minutes.toInt()
+                        totalTime = (elapsedMillis / 1000 / 60).toInt()
                     }
 
                     binding.timer.start()
@@ -243,7 +243,7 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
                     price *= 100
                     intent.putExtra("priceKey",price.toInt().toString())
-                    intent.putExtra("timeKey","0:02")
+                    intent.putExtra("timeKey",totalTime)
                     startActivity(intent)
 
 

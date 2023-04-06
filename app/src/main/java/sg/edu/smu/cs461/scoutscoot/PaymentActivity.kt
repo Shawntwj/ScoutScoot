@@ -28,34 +28,45 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
-
         // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
         val it = intent
-        val priceContext = it.getStringExtra("priceKey").toString()
-        println(priceContext)
+        var priceContext = it.getStringExtra("priceKey").toString()
         val price = findViewById<TextView>(R.id.priceValue)
         val priceDisplay = (priceContext.toInt() / 100 ).toString()
         price.text= priceDisplay
 
+        // default payment for stripe is 0.5
+        if (priceContext.toInt() == 0){
+            priceContext = "50"
+            price.text= "0.5"
+        }
 
-        val timeContext = it.getStringExtra("timeKey").toString()
-        println(timeContext)
-        val time = findViewById<TextView>(R.id.timeValue)
-        time.text= timeContext
+        // transform time to appropriate hours and minutes
+        val defaultValue = 0 // default value to return if the extra is not found
+        val timeContext = it.getIntExtra("timeKey", defaultValue)
+        val timeHr = timeContext.div(60)
+        val timeMin = timeContext % 60
+        var timeMinString = timeMin.toString()
+        if (timeMin < 10){
+            timeMinString = "0$timeMin"
+        }
+        val timeHrView = findViewById<TextView>(R.id.timeValueHr)
+        val timeMinView = findViewById<TextView>(R.id.timeValueMin)
+        timeHrView.text= timeHr.toString()
+        timeMinView.text= timeMinString
 
-
+        // disable button before fetch API runs
         val paymentButton = findViewById<Button>(R.id.payment)
-
         paymentButton.isEnabled = false
-        fetchAPI(priceContext)
-        paymentButton.isEnabled = true
 
         // fetch API calls the stripe API (stored in a node.js on firebase)
         // takes in a price parameter used for query "https://payment?amt=$price"
-        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
+        fetchAPI(priceContext)
+
         // set the stripe variables on top into a function that will be ran when payment button is clicked
+        paymentSheet = PaymentSheet(this, ::onPaymentSheetResult)
 
-
+        // Pass the payment information to Stripe SDK upon payment button click and continue with payment flow
         paymentButton.setOnClickListener {
             if (paymentIntentClientSecret != null){
                 paymentSheet?.presentWithPaymentIntent(paymentIntentClientSecret, PaymentSheet.Configuration("Codes Easy", configuration));
@@ -93,7 +104,6 @@ class PaymentActivity : AppCompatActivity() {
 
 
     private fun fetchAPI(price: String) {
-//        val url = "https://demo.codeseasy.com/apis/stripe/"
         val url = "https://us-central1-stripepayment-ac54d.cloudfunctions.net/stripePayments?amt=$price"
         val queue = Volley.newRequestQueue(this)
 
@@ -102,7 +112,7 @@ class PaymentActivity : AppCompatActivity() {
         val request = object : JsonObjectRequest(Method.POST, url, null,
             { response ->
                 try {
-                    println("request here")
+                    println("request has arrived")
                     val paymentIntent = response.getString("paymentIntent")
                     val ephemeralKey = response.getString("ephemeralKey")
                     val customer = response.getString("customer")
@@ -112,9 +122,14 @@ class PaymentActivity : AppCompatActivity() {
                         customer,
                         ephemeralKey
                     )
+
                     paymentIntentClientSecret = paymentIntent
                     PaymentConfiguration.init(applicationContext, publishableKey)
-                    // Pass the payment information to Stripe SDK and continue with payment flow
+
+                    // enable the button again after request has arrived
+                    val paymentButton = findViewById<Button>(R.id.payment)
+                    paymentButton.isEnabled = true
+
 
                 } catch (e: JSONException) {
                     println("inside response failed")
