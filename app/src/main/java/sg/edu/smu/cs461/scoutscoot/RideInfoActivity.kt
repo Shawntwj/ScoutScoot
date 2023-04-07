@@ -14,8 +14,11 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Geocoder
 import android.location.Location
+import android.location.LocationRequest
 import android.os.Bundle
+import android.os.Looper
 import android.os.SystemClock
 import android.view.View
 import android.widget.Button
@@ -25,7 +28,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -38,6 +43,9 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityRideInfoBinding
+import java.io.IOException
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class RideInfoActivity : AppCompatActivity() , SensorEventListener {
@@ -58,6 +66,10 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     private var color = false
 
     private var totalTime = 0
+    private var latitudeFrom = 0.0
+    private var longitudeFrom = 0.0
+
+    private lateinit var locationCallback: LocationCallback
 
 
     companion object {
@@ -72,6 +84,9 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
         preferences = getPreferences(Context.MODE_PRIVATE)
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        latitudeFrom = intent.getDoubleExtra("latitude", 0.0)
+        longitudeFrom = intent.getDoubleExtra("longitude", 0.0)
 
         // accelormeter sensor code
         sensorMan = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -124,12 +139,8 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                 }
             })
 
-
-
-
-
-
         setContentView(view)
+
     }
 
     private fun getRentalInfo(rentalID: String) {
@@ -149,6 +160,8 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                         binding.price.text = price.toString().plus(" SGD")
                         totalTime = (elapsedMillis / 1000 / 60).toInt()
                     }
+
+
 
                     binding.timer.start()
                     binding.lock.setOnClickListener {
@@ -194,12 +207,32 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
         var position: String
         val tokenSource = CancellationTokenSource();
         val token = tokenSource.token
+
         fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY,token)
             .addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     val latitude = location.latitude
                     val longitude = location.longitude
+
+                    println(latitude)
+                    println(longitude)
+                    println("changed location?")
+
                     position = latitude.toString().plus(", ").plus(longitude.toString())
+
+                    var postalTo = ""
+                    val geocoder = Geocoder(this, Locale.getDefault())
+                    val addressTo= geocoder.getFromLocation(latitude,longitude,1)
+                    if (addressTo!!.isNotEmpty()){
+                        postalTo = addressTo[0].postalCode
+                    }
+
+                    var postalFrom = ""
+                    val addressFrom = geocoder.getFromLocation(latitudeFrom,longitudeFrom,1)
+                    if (addressFrom!!.isNotEmpty()){
+                        postalFrom = addressFrom[0].postalCode
+                    }
+
 
                     database.child("Users")
                         .child((auth.currentUser?.uid!!))
@@ -244,6 +277,8 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                     price *= 100
                     intent.putExtra("priceKey",price.toInt().toString())
                     intent.putExtra("timeKey",totalTime)
+                    intent.putExtra("toKey",postalTo)
+                    intent.putExtra("fromKey",postalFrom)
                     startActivity(intent)
 
 
@@ -357,7 +392,6 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     override fun onPause() {
         super.onPause()
         sensorMan.unregisterListener(this)
-
     }
 
     // on sensor changed
@@ -388,5 +422,20 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the variables to the outState bundle
+        outState.putDouble("latitudeFrom", latitudeFrom)
+        outState.putDouble("longitudeFrom", longitudeFrom)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        // Restore the variables from the savedInstanceState bundle
+        latitudeFrom = savedInstanceState.getDouble("latitudeFrom")
+        longitudeFrom = savedInstanceState.getDouble("longitudeFrom")
+    }
 
 }

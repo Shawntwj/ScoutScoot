@@ -35,6 +35,7 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
     private lateinit var markerIcon: BitmapDescriptor
     private lateinit var binding: FragmentHomeBinding
     private val markerIds: HashMap<Marker, String> = HashMap()
+    private val markerLocation: HashMap<Marker, LatLng> = HashMap()
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private var mapFragment: SupportMapFragment? = null
 
@@ -81,6 +82,7 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
     @SuppressLint("MissingPermission")
     private val callback = OnMapReadyCallback { googleMap ->
         // Add a marker in SMU and move the camera
+
         val smu = LatLng(1.2963,103.8502)
         Firebase.database(DATABASE_URL).reference.child("Scooter").addValueEventListener(object :
             ValueEventListener {
@@ -89,10 +91,14 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
 
                 //val toast = Toast.makeText(activity, "data chnaged", Toast.LENGTH_SHORT)
                 //toast.show()
+
+
+
                 for(postSnapshot in dataSnapshot.children){
                     if(postSnapshot.getValue<Scooter>()?.rented==false){
                         val tempScooter = postSnapshot.getValue<Scooter>()
                         val key = postSnapshot.key
+                        val latlong = tempScooter!!.position
 
                         val marker = tempScooter?.let {
                             MarkerOptions()
@@ -102,6 +108,8 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
                                 .icon(markerIcon)
                         }?.let { googleMap.addMarker(it) }
                         marker?.let { markerIds.put(it, key!!) }
+                        marker?.let { markerLocation.put(it, latlong)}
+
 
                     }
                 }
@@ -124,6 +132,8 @@ class Home : Fragment(), OnMapsSdkInitializedCallback {
 
             val bundle = Bundle()
             bundle.putString("scooter-index", markerIds.get(it).toString())
+            bundle.putDouble("latitude", markerLocation.get(it)!!.latitude)
+            bundle.putDouble("longitude", markerLocation.get(it)!!.longitude)
             val fragment: Fragment = ScanQR()
             fragment.arguments = bundle
             val transaction: FragmentTransaction = requireFragmentManager().beginTransaction()

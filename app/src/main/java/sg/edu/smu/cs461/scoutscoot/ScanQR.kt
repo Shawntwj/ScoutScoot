@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.barcode.Barcode
@@ -37,6 +38,7 @@ class ScanQR : Fragment() {
     private val database = Firebase.database(DATABASE_URL).reference
     private lateinit var _binding: FragmentScanQRBinding
     private val binding get() = _binding!!
+    private lateinit var latLong: LatLng
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -75,6 +77,8 @@ class ScanQR : Fragment() {
     private fun setupControls() {
         var args = this.arguments
         var scooterId = args?.getString("scooter-index")
+        var latitude = args?.getDouble("latitude")
+        var longitude = args?.getDouble("longitude")
 
         Log.i("rideid FROM scanner fragment", scooterId.toString())
 
@@ -142,6 +146,8 @@ class ScanQR : Fragment() {
 
                             val intent = Intent(context, StartRideActivity::class.java)
                             intent.putExtra("scooterindex", scooterId)
+                            intent.putExtra("latitude", latitude)
+                            intent.putExtra("longitude", longitude)
                             startActivity(intent)
                         }
                     }

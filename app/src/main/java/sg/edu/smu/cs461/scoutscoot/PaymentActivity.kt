@@ -35,6 +35,20 @@ class PaymentActivity : AppCompatActivity() {
         val priceDisplay = (priceContext.toInt() / 100 ).toString()
         price.text= priceDisplay
 
+        // HERE: fetch distance and location postal
+        var fromValue = it.getStringExtra("fromKey")
+        var toValue = it.getStringExtra("toKey")
+
+
+//        var distanceValue = it.getStringExtra("distance").toString()
+        val from = findViewById<TextView>(R.id.fromDestination)
+        val to = findViewById<TextView>(R.id.toDestination)
+//        val distance = findViewById<TextView>(R.id.distanceValue)
+        from.text = fromValue
+        to.text = toValue
+//        distance.text = distanceValue
+
+
         // default payment for stripe is 0.5
         if (priceContext.toInt() == 0){
             priceContext = "50"
@@ -94,7 +108,6 @@ class PaymentActivity : AppCompatActivity() {
             Toast.makeText(this, (paymentSheetResult as PaymentSheetResult.Failed).error.message, Toast.LENGTH_SHORT).show()
         }
         if (paymentSheetResult is PaymentSheetResult.Completed) {
-            println("success")
             Toast.makeText(this, "Payment success", Toast.LENGTH_SHORT).show()
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("paymentSuccessful", true)
@@ -138,7 +151,6 @@ class PaymentActivity : AppCompatActivity() {
                 }
             },
             { error ->
-                println("no response")
                 error.printStackTrace()
             }) {
             override fun getHeaders(): MutableMap<String, String> {
