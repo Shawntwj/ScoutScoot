@@ -57,7 +57,7 @@ class StartRideActivity : AppCompatActivity() {
                             scooter = postSnapshot.getValue<Scooter>()!!
                             binding.scootername.setText(scooter.name)
                             binding.range.setText(scooter.getRange().toString().plus(" km"))
-                            binding.price.setText("$1/min")
+                            binding.price.setText("$0.50 / \n 30 seconds")
                         }
                         else{
                             setResult(Activity.RESULT_OK)
