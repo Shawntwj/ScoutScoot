@@ -39,6 +39,10 @@ class PaymentActivity : AppCompatActivity() {
         var fromValue = it.getStringExtra("fromKey")
         var toValue = it.getStringExtra("toKey")
 
+        println("at payment")
+        println(fromValue)
+        println(toValue)
+
 
 //        var distanceValue = it.getStringExtra("distance").toString()
         val from = findViewById<TextView>(R.id.fromDestination)

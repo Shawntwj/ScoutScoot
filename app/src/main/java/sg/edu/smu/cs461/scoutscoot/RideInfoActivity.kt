@@ -16,7 +16,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationRequest
+//import android.location.LocationRequest
 import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
@@ -30,6 +30,8 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.Priority
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.CancellationTokenSource
@@ -42,10 +44,14 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import sg.edu.smu.cs461.scoutscoot.databinding.ActivityRideInfoBinding
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 
 class RideInfoActivity : AppCompatActivity() , SensorEventListener {
@@ -70,6 +76,12 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     private var longitudeFrom = 0.0
 
     private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
+
+
+    private var latestLatitude: Double = 0.0
+    private var latestLongitude: Double = 0.0
+
 
 
     companion object {
@@ -141,6 +153,26 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
         setContentView(view)
 
+        locationRequest = LocationRequest.create().apply {
+            interval = 1000
+            fastestInterval = 50
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                p0 ?: return
+                for (location in p0.locations) {
+                    // Use the latest location here
+                    latestLatitude = location.latitude
+                    latestLongitude = location.longitude
+
+                    println(latestLatitude)
+                    println(latestLongitude)
+                    println("changed location?")
+                }
+            }
+        }
+
     }
 
     private fun getRentalInfo(rentalID: String) {
@@ -197,7 +229,6 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
             })
     }
 
-
     @SuppressLint("MissingPermission")
     private fun endrental() {
         binding.endrental.isEnabled=false
@@ -211,75 +242,89 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
         fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY,token)
             .addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-
-                    println(latitude)
-                    println(longitude)
-                    println("changed location?")
-
-                    position = latitude.toString().plus(", ").plus(longitude.toString())
-
+                    val latitude =  latestLatitude
+                    val longitude = latestLongitude
                     var postalTo = ""
-                    val geocoder = Geocoder(this, Locale.getDefault())
-                    val addressTo= geocoder.getFromLocation(latitude,longitude,1)
-                    if (addressTo!!.isNotEmpty()){
-                        postalTo = addressTo[0].postalCode
-                    }
-
                     var postalFrom = ""
-                    val addressFrom = geocoder.getFromLocation(latitudeFrom,longitudeFrom,1)
-                    if (addressFrom!!.isNotEmpty()){
-                        postalFrom = addressFrom[0].postalCode
+
+
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        // Perform other Geocoder-related tasks
+                        postalTo = ""
+                        val geocoder = Geocoder(this@RideInfoActivity, Locale.getDefault())
+                        val addressTo= geocoder.getFromLocation(latitude,longitude,1)
+                        if (addressTo!!.isNotEmpty()){
+                            postalTo = addressTo[0].postalCode
+                        }
+
+                        postalFrom = ""
+                        val addressFrom = geocoder.getFromLocation(latitudeFrom,longitudeFrom,1)
+                        if (addressFrom!!.isNotEmpty()){
+                            postalFrom = addressFrom[0].postalCode
+                        }
+                        println(postalTo)
+                        println(postalFrom)
+                        println("is this running")
+
+                        // Move the following code back to the main thread
+                        launch(Dispatchers.Main) {
+                            position = latitude.toString().plus(", ").plus(longitude.toString())
+
+                            database.child("Users")
+                                .child((auth.currentUser?.uid!!))
+                                .child("Rides")
+                                .child(rentalID)
+                                .child("end_time")
+                                .setValue(System.currentTimeMillis())
+                            database.child("Users")
+                                .child((auth.currentUser?.uid!!))
+                                .child("Rides")
+                                .child(rentalID)
+                                .child("final_latlong")
+                                .setValue(position)
+                            database.child("Users")
+                                .child(auth.currentUser?.uid!!)
+                                .child("Rides")
+                                .child(rentalID)
+                                .child("price")
+                                .setValue(price)
+
+                            database.child("Users")
+                                .child((auth.currentUser?.uid!!))
+                                .child("inRental")
+                                .setValue("false")
+
+                            database.child("Scooter")
+                                .child(ride.scooter_ID.toString())
+                                .child("rented")
+                                .setValue(false)
+
+                            database.child("Scooter")
+                                .child(ride.scooter_ID.toString())
+                                .child("where")
+                                .setValue(position)
+
+                            val intent = Intent(this@RideInfoActivity, PaymentActivity::class.java)
+
+                            println(postalTo)
+                            println(postalFrom)
+                            println("near intent")
+
+                            price *= 100
+                            intent.putExtra("priceKey",price.toInt().toString())
+                            intent.putExtra("timeKey",totalTime)
+                            intent.putExtra("toKey",postalTo)
+                            intent.putExtra("fromKey",postalFrom)
+                            startActivity(intent)
+
+                        }
                     }
-
-
-                    database.child("Users")
-                        .child((auth.currentUser?.uid!!))
-                        .child("Rides")
-                        .child(rentalID)
-                        .child("end_time")
-                        .setValue(System.currentTimeMillis())
-                    database.child("Users")
-                        .child((auth.currentUser?.uid!!))
-                        .child("Rides")
-                        .child(rentalID)
-                        .child("final_latlong")
-                        .setValue(position)
-                    database.child("Users")
-                        .child(auth.currentUser?.uid!!)
-                        .child("Rides")
-                        .child(rentalID)
-                        .child("price")
-                        .setValue(price)
-
-                    database.child("Users")
-                        .child((auth.currentUser?.uid!!))
-                        .child("inRental")
-                        .setValue("false")
-
-                    database.child("Scooter")
-                        .child(ride.scooter_ID.toString())
-                        .child("rented")
-                        .setValue(false)
-
-                    database.child("Scooter")
-                        .child(ride.scooter_ID.toString())
-                        .child("where")
-                        .setValue(position)
 
 //                    val intent = Intent(this, MainActivity::class.java)
 //                    intent.putExtra("rideEnded", true)
 //                    startActivity(intent)
 
-                    val intent = Intent(this, PaymentActivity::class.java)
-
-                    price *= 100
-                    intent.putExtra("priceKey",price.toInt().toString())
-                    intent.putExtra("timeKey",totalTime)
-                    intent.putExtra("toKey",postalTo)
-                    intent.putExtra("fromKey",postalFrom)
-                    startActivity(intent)
 
 
                 } else {
@@ -387,11 +432,36 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     override fun onResume() {
         super.onResume()
         sensorMan.registerListener(this, accelerometer,SensorManager.SENSOR_DELAY_NORMAL)
+        startLocationUpdates()
+    }
+
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Request location permissions if not granted
+            return
+        }
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     override fun onPause() {
         super.onPause()
         sensorMan.unregisterListener(this)
+        stopLocationUpdates()
+    }
+
+    private fun stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
     }
 
     // on sensor changed
