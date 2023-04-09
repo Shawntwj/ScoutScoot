@@ -74,17 +74,17 @@
 <!--        android:id="@+id/test"-->
 <!--        />-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to end ride"
-        android:id="@+id/newtest"
-        />
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to end ride"-->
+<!--        android:id="@+id/newtest"-->
+<!--        />-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go to start ride"
-        android:id="@+id/newnewtest"
-    />
+<!--    <Button-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Go to start ride"-->
+<!--        android:id="@+id/newnewtest"-->
+<!--    />-->
 </LinearLayout>

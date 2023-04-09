@@ -43,8 +43,6 @@ class MainActivity : AppCompatActivity() {
         val paymentSuccessful = intent.getBooleanExtra("paymentSuccessful", false)
 
         if (paymentSuccessful) {
-            println("it works")
-
             // Navigate to the Home fragment
 //            loadFragment(Profile())
 

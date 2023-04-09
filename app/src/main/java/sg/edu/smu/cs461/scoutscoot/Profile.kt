@@ -51,13 +51,13 @@ class Profile : Fragment() {
 //            switchPayment()
 //        }
 //
-        binding.newtest.setOnClickListener{
-            goendride()
-        }
-
-        binding.newnewtest.setOnClickListener({
-            gostartride()
-        })
+//        binding.newtest.setOnClickListener{
+//            goendride()
+//        }
+//
+//        binding.newnewtest.setOnClickListener({
+//            gostartride()
+//        })
 
         binding.RideLists.setOnClickListener{
             val intent = Intent (getActivity(), ListRideActivity::class.java)
@@ -81,16 +81,16 @@ class Profile : Fragment() {
 //        startActivity(intent)
 //    }
 //
-    fun goendride(){
-        val intent = Intent(requireActivity(),RideInfoActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun gostartride(){
-        val intent = Intent(requireActivity(),StartRideActivity::class.java)
-        intent.putExtra("scooterindex", "1002")
-        startActivity(intent)
-    }
+//    fun goendride(){
+//        val intent = Intent(requireActivity(),RideInfoActivity::class.java)
+//        startActivity(intent)
+//    }
+//
+//    fun gostartride(){
+//        val intent = Intent(requireActivity(),StartRideActivity::class.java)
+//        intent.putExtra("scooterindex", "1002")
+//        startActivity(intent)
+//    }
 
 
 }

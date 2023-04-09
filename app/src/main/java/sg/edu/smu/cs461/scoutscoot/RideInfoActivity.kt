@@ -168,7 +168,7 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
                     println(latestLatitude)
                     println(latestLongitude)
-                    println("changed location?")
+                    println("location is currently tracking")
                 }
             }
         }
@@ -265,7 +265,6 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
                         }
                         println(postalTo)
                         println(postalFrom)
-                        println("is this running")
 
                         // Move the following code back to the main thread
                         launch(Dispatchers.Main) {
@@ -307,9 +306,10 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
                             val intent = Intent(this@RideInfoActivity, PaymentActivity::class.java)
 
+                            println("location to be pushed to intent")
                             println(postalTo)
                             println(postalFrom)
-                            println("near intent")
+
 
                             price *= 100
                             intent.putExtra("priceKey",price.toInt().toString())
@@ -320,11 +320,6 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
 
                         }
                     }
-
-//                    val intent = Intent(this, MainActivity::class.java)
-//                    intent.putExtra("rideEnded", true)
-//                    startActivity(intent)
-
 
 
                 } else {

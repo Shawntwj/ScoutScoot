@@ -28,20 +28,16 @@ class PaymentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
 
-        // fetch by price displayed on the priceTV (i assume this will be loaded in after scan
+        // fetch keys from rideinfo activity
+        // price, from postal, to postal, distance, duration and price
         val it = intent
         var priceContext = it.getStringExtra("priceKey").toString()
         val price = findViewById<TextView>(R.id.priceValue)
         val priceDisplay = (priceContext.toInt() / 100 ).toString()
         price.text= priceDisplay
 
-        // HERE: fetch distance and location postal
         var fromValue = it.getStringExtra("fromKey")
         var toValue = it.getStringExtra("toKey")
-
-        println("at payment")
-        println(fromValue)
-        println(toValue)
 
 
 //        var distanceValue = it.getStringExtra("distance").toString()
@@ -51,7 +47,6 @@ class PaymentActivity : AppCompatActivity() {
         from.text = fromValue
         to.text = toValue
 //        distance.text = distanceValue
-
 
         // default payment for stripe is 0.5
         if (priceContext.toInt() == 0){
