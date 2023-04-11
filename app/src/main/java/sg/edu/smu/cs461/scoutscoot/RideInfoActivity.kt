@@ -460,25 +460,65 @@ class RideInfoActivity : AppCompatActivity() , SensorEventListener {
     }
 
     // on sensor changed
-    override fun onSensorChanged(event: SensorEvent?) {
-        val x = event!!.values[0]
-        val y = event!!.values[1]
-        val z = event!!.values[2]
+    var lastUpdateTime: Long = 0
+    var lastVelocity: Float = 0f
+    var elapsedTime = 0f
+    val REST_THRESHOLD = 0.1f
 
-        val accel = Math.sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+    override fun onSensorChanged(event: SensorEvent?) {
+
+        val currentTime = System.currentTimeMillis()
+        elapsedTime = (currentTime - lastUpdateTime) / 1000f
+        if (elapsedTime > 1f) {
+            elapsedTime = 1f
+        }
+
+
+
+        lastUpdateTime = currentTime
+
+        val x = event!!.values[0]
+//        val y = event!!.values[1]
+//        val z = event!!.values[2]
+
+        val accel = Math.sqrt((x * x ).toDouble()).toFloat()
 
 //        findViewById<TextView>(R.id.accelX).text = "Acceleration X: $x"
 //        findViewById<TextView>(R.id.accelY).text = "Acceleration Y: $y"
 //        findViewById<TextView>(R.id.accelZ).text = "Acceleration Z: $z"
-        findViewById<TextView>(R.id.accel).text = "Acceleration: $accel"
+        // Calculate velocity
+        var velocity = lastVelocity + accel * elapsedTime
+        lastVelocity = velocity
 
-        if (accel > 20) {
-            Toast.makeText(this, "TOO FAST", Toast.LENGTH_SHORT)
+
+        println("last velocity")
+        println(lastVelocity)
+
+        if (accel < REST_THRESHOLD) {
+            lastVelocity = 0f
+        } else {
+            // Calculate velocity
+            var velocity = lastVelocity + accel * elapsedTime
+            lastVelocity = velocity
+        }
+
+
+        // Convert velocity from m/s to km/hr
+        val velocityKmh = velocity * 3.6
+        val roundedVelocity = Math.round(velocityKmh * 100).toInt() / 100f
+
+        findViewById<TextView>(R.id.accel).text = "Speed: $roundedVelocity"
+
+        if (roundedVelocity.toInt() > 10) {
+            Toast.makeText(this, "TOO FAST Over 10 Km/Hr", Toast.LENGTH_SHORT)
                 .show()
             // you can insert you speed control here
             findViewById<Button>(R.id.lock).text = "Unlock"
         }
+
     }
+
+
 
     fun unlock(view: View){
         findViewById<Button>(R.id.lock).text = "lock"
