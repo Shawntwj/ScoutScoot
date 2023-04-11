@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.home -> replaceFragment(Home())
-                R.id.qr -> replaceFragment(ScanQR())
+                R.id.qr -> replaceFragment(ScanQRButton())
                 R.id.profile -> replaceFragment(Profile())
 
                 else ->{
